@@ -4,3 +4,4 @@ Vagrantfile
 **/.idea
 **/id_rsa**
 **/.terraform.tfstate.lock.info
+**/cookie.txt

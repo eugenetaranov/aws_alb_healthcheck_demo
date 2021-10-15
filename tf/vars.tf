@@ -37,3 +37,8 @@ variable "elb_healthcheck" {
     timeout  = 2
   }
 }
+
+variable "app_nodes_num" {
+  type    = number
+  default = 2
+}

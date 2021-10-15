@@ -61,6 +61,11 @@ resource "aws_lb_target_group" "app" {
   deregistration_delay = 30
   proxy_protocol_v2    = false
 
+  stickiness {
+    enabled = true
+    type    = "lb_cookie"
+  }
+
   health_check {
     healthy_threshold   = 2
     interval            = var.elb_healthcheck["interval"]
@@ -75,8 +80,9 @@ resource "aws_lb_target_group" "app" {
 }
 
 resource "aws_lb_target_group_attachment" "app" {
+  count            = var.app_nodes_num
   target_group_arn = aws_lb_target_group.app.arn
-  target_id        = aws_instance.app.id
+  target_id        = aws_instance.app[count.index].id
   port             = var.app_port
 }
 

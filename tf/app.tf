@@ -47,6 +47,7 @@ resource "aws_key_pair" "default" {
 }
 
 resource "aws_instance" "app" {
+  count                       = var.app_nodes_num
   instance_type               = "t3.micro"
   ami                         = data.aws_ami.ubuntu.id
   subnet_id                   = module.vpc.private_subnets[0]
@@ -64,7 +65,7 @@ resource "aws_instance" "app" {
 
   tags = merge(
     {
-      "Name" = "${var.environment}-app",
+      "Name" = "${var.environment}-app-${count.index}",
     },
     var.tags,
   )
@@ -160,13 +161,16 @@ EOF
 }
 
 output "app_id" {
-  value = aws_instance.app.id
+  value = aws_instance.app.*.id
 }
 
 output "app_private_ip" {
-  value = aws_instance.app.private_ip
+  value = aws_instance.app.*.private_ip
 }
 
 output "ssh_connection" {
-  value = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -J ubuntu@${aws_instance.gw.public_ip} ubuntu@${aws_instance.app.private_ip}"
+  value = {
+    for i, instance in aws_instance.app :
+    i => "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -J ubuntu@${aws_instance.gw.public_ip} ubuntu@${instance.private_ip}"
+  }
 }
