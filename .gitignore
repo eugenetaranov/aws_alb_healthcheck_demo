@@ -1,0 +1,6 @@
+**/.vagrant
+Vagrantfile
+**/terraform.tfstate*
+**/.idea
+**/id_rsa**
+**/.terraform.tfstate.lock.info
