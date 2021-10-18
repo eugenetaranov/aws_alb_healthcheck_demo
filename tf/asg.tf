@@ -66,16 +66,6 @@ resource "aws_autoscaling_group" "app" {
     value               = "${var.environment}-app"
     propagate_at_launch = true
   }
-
-  dynamic "tag" {
-    for_each = var.tags
-
-    content {
-      key                 = tag.key
-      value               = tag.value
-      propagate_at_launch = true
-    }
-  }
 }
 
 resource "aws_autoscaling_attachment" "app" {

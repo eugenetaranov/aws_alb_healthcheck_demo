@@ -12,16 +12,20 @@ terraform apply
 ```
 
 ##### Test
-1. Connect to the app nodes
+1. Obtain app nodes private ip addresses
+```shell
+sh ../scripts/get_app_private_ip.sh
+```
+2. Connect to the gateway node
 ```shell
 cd tf
 ssh-add id_rsa
-ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -J ubuntu@$(terraform output -raw gw_ip) ubuntu@$(terraform output -json app_instance_private_ip | jq -r '[."0"][0]')
-ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -J ubuntu@$(terraform output -raw gw_ip) ubuntu@$(terraform output -json app_instance_private_ip | jq -r '[."1"][0]')
+ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ForwardAgent=yes ubuntu@$(terraform output -raw gw_ip)
+# start tmux
+# ssh to the nodes from #1
 ```
-
-2. Confirm web node passed healthcheck in AWS console.
-3. Obtain a cookie to make sure subsequent request will hit the same node.
+3. Confirm web node passed healthcheck in AWS console.
+4. Obtain a cookie to make sure subsequent request will hit the same node.
 ```shell
 cd tf
 curl -b cookie.txt -c cookie.txt -w %{time_total} $(terraform output -raw app_url) ; echo

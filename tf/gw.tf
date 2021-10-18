@@ -49,12 +49,9 @@ resource "aws_instance" "gw" {
     delete_on_termination = true
   }
 
-  tags = merge(
-    {
-      "Name" = "${var.environment}-gw",
-    },
-    var.tags,
-  )
+  tags = {
+    "Name" = "${var.environment}-gw"
+  }
 }
 
 output "gw_id" {
@@ -63,4 +60,8 @@ output "gw_id" {
 
 output "gw_ip" {
   value = aws_instance.gw.public_ip
+}
+
+output "ssh_connection" {
+  value = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ForwardAgent=yes ubuntu@${aws_instance.gw.public_ip}"
 }
