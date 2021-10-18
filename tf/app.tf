@@ -46,31 +46,6 @@ resource "aws_key_pair" "default" {
   public_key      = file("id_rsa.pub")
 }
 
-resource "aws_instance" "app" {
-  count                       = var.app_nodes_num
-  instance_type               = "t3.micro"
-  ami                         = data.aws_ami.ubuntu.id
-  subnet_id                   = module.vpc.private_subnets[0]
-  vpc_security_group_ids      = [aws_security_group.app.id]
-  associate_public_ip_address = false
-  user_data                   = data.template_file.main.rendered
-  key_name                    = aws_key_pair.default.key_name
-  iam_instance_profile        = aws_iam_instance_profile.app.name
-
-  root_block_device {
-    volume_type           = "standard"
-    volume_size           = 10
-    delete_on_termination = true
-  }
-
-  tags = merge(
-    {
-      "Name" = "${var.environment}-app-${count.index}",
-    },
-    var.tags,
-  )
-}
-
 resource "aws_iam_instance_profile" "app" {
   name_prefix = "${var.environment}-"
   role        = aws_iam_role.app.id
@@ -158,25 +133,4 @@ users:
     ssh_authorized_keys:
       - ${file("id_rsa.pub")}
 EOF
-}
-
-output "app_instance_id" {
-  value = {
-    for i, instance in aws_instance.app :
-    i => instance.id
-  }
-}
-
-output "app_instance_private_ip" {
-  value = {
-    for i, instance in aws_instance.app :
-    i => instance.private_ip
-  }
-}
-
-output "ssh_connection" {
-  value = {
-    for i, instance in aws_instance.app :
-    i => "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -J ubuntu@${aws_instance.gw.public_ip} ubuntu@${instance.private_ip}"
-  }
 }

@@ -38,6 +38,11 @@ variable "elb_healthcheck" {
   }
 }
 
+variable "asg_health_check_type" {
+  type    = string
+  default = "ELB"
+}
+
 variable "app_nodes_num" {
   type    = number
   default = 2
