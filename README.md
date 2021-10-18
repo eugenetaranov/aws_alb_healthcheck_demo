@@ -16,8 +16,8 @@ terraform apply
 ```shell
 cd tf
 ssh-add id_rsa
-ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -J ubuntu@$(terraform output -raw gw_ip) ubuntu@$(terraform output -raw app_private_ip[0])
-ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -J ubuntu@$(terraform output -raw gw_ip) ubuntu@$(terraform output -raw app_private_ip[1])
+ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -J ubuntu@$(terraform output -raw gw_ip) ubuntu@$(terraform output -json app_instance_private_ip | jq -r '[."0"][0]')
+ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -J ubuntu@$(terraform output -raw gw_ip) ubuntu@$(terraform output -json app_instance_private_ip | jq -r '[."1"][0]')
 ```
 
 2. Confirm web node passed healthcheck in AWS console.

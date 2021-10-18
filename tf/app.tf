@@ -160,12 +160,18 @@ users:
 EOF
 }
 
-output "app_id" {
-  value = aws_instance.app.*.id
+output "app_instance_id" {
+  value = {
+    for i, instance in aws_instance.app :
+    i => instance.id
+  }
 }
 
-output "app_private_ip" {
-  value = aws_instance.app.*.private_ip
+output "app_instance_private_ip" {
+  value = {
+    for i, instance in aws_instance.app :
+    i => instance.private_ip
+  }
 }
 
 output "ssh_connection" {
