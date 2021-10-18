@@ -38,9 +38,9 @@ variable "elb_healthcheck" {
   }
 }
 
-variable "asg_health_check_type" {
-  type    = string
-  default = "ELB"
+variable "asg_health_check_elb_enabled" {
+  type    = bool
+  default = true
 }
 
 variable "app_nodes_num" {

@@ -34,7 +34,7 @@ resource "aws_autoscaling_group" "app" {
   desired_capacity          = 2
   max_size                  = 2
   health_check_grace_period = 120
-  health_check_type         = var.asg_health_check_type
+  health_check_type         = var.asg_health_check_elb_enabled ? "ELB" : "EC2"
   default_cooldown          = 900
   vpc_zone_identifier       = module.vpc.private_subnets
   force_delete              = "false"
